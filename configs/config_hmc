@@ -1,0 +1,60 @@
+[general]
+
+# number of parameters
+n = 3
+
+# number of dimensions
+#dimensions = 2
+
+# seed for random number generator
+seed = 1123
+
+[leap_frog]
+
+# step size
+epsilon = 0.04
+
+# accuracy goal for tuning epsilon
+accuracy = 0.01
+
+# max time step size, this will be used for tuning
+# negative values mean no tuning
+max_epsilon = -0.1
+
+# number of iteration for the time step tunig procedure
+# negative values mean no tuning
+tune_iter = -100
+
+# fraction parameter for time step tuning procedure
+# negative values mean no tuning
+tune_f = -0.9
+
+# length of trajectories for leaf frog
+# integration, the number of iterations
+# is length / epsilon
+length = 0.2
+
+# initial q (positions) and p (momneta)
+# values for the chain, this
+# will be also used in the procedure
+# adjusting the time step
+#initial_q = [-1.0 , 0.1 , 1.1]
+#initial_p = [-1.0 , 0.1 , 1.1]
+
+[hamiltonian_monte_carlo]
+
+# mass parameter
+mass = 1.0
+
+# number of iterations
+iterations = 10000
+
+#[truth]
+
+# true parameters of the multinormal distribution
+#parameters = [0.5 , 1.0 , -0.5]
+
+# number of points to generate from the true distribution,
+# this will be used to work out the parameters
+#len = 100
+
