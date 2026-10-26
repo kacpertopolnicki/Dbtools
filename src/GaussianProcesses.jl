@@ -255,7 +255,9 @@ function GPParams!(
 	sigman = sgm_xx_xx - sgm_xx_x * inv_sgm_x_x * transpose(sgm_xx_x)
 	sigman = correctPositiveDefinite(sigman)
 	
+	gp.mu = mun
 	gp.sigma = sigman
+	gp.dist = MvNormal(mun , sigman)
 
 	return gp
 end

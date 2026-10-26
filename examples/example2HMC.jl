@@ -85,7 +85,7 @@ if abspath(PROGRAM_FILE) == @__FILE__
 	function nablauGP(parameters, vector)
 		global gpNabla
 		gpNabla = GPParams!(gpNabla , [parameters])
-		spl = GPSample!(gp1 , n = 1)
+		spl = GPSample!(gpNabla , n = 1)
 		return ([spl[2,1]],)
 	end
 
