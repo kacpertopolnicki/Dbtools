@@ -83,10 +83,13 @@ if abspath(PROGRAM_FILE) == @__FILE__
 	gpNabla = GPParams(parsed_args["configuration_file_gp"] , qvals , vals , [[0.5]])
 
 	function nablauGP(parameters, vector)
+		#global gpNabla
+		#gpNabla = GPParams!(gpNabla , [parameters])
+		#spl = GPSample!(gpNabla , n = 1)
+		#return ([spl[2,1]],)
 		global gpNabla
 		gpNabla = GPParams!(gpNabla , [parameters])
-		spl = GPSample!(gpNabla , n = 1)
-		return ([spl[2,1]],)
+		return ([gpNabla.mu[2]],)
 	end
 
 	println("RUNNING HMC WITH GAUSSIAN PROCESS...")
