@@ -59,28 +59,32 @@ if abspath(PROGRAM_FILE) == @__FILE__
 	
 	println("... DONE")
 	
-	println("CALCULATING GAUSSIAN PROCESS PARAMETERS ...")
+	println("CALCULATING GAUSSIAN PROCESS DATA ...")
 	qvals = [l.q for l in chain]
 
 	vals = vcat(
 				[l.u for l in chain] ,
 				[l.nu[1] for l in chain] )
 
-	gp = GPParams(parsed_args["configuration_file_gp"] , qvals , vals , [[1.0]])
+	#gp = GPParams(parsed_args["configuration_file_gp"] , qvals , vals , [[1.0]])
+	#gp = GPParams(parsed_args["configuration_file_gp"] , qvals , vals)
 	println("... DONE")
 	
-	println("CALCULATING GAUSSIAN PROCESS PARAMETERS AGAIN ...")
-	gp1 = GPParams(parsed_args["configuration_file_gp"] , qvals , vals , [[0.5]])
-	spl1 = GPSample!(gp1 , n = 10)
+	println("CALCULATING GAUSSIAN PROCESS PARAMETERS ...")
+	#gp1 = GPParams(parsed_args["configuration_file_gp"] , qvals , vals , [[0.5]])
+	gp1 = GPParams(parsed_args["configuration_file_gp"] , qvals , vals)
+	spl1 = GPSample!(gp1 , [[0.5]] , n = 10)
 	println("spl1 : ")
 	display(spl1)
-	gp1 = GPParams!(gp1 , [[0.5]])
-	spl2 = GPSample!(gp1 , n = 10)
+	spl2 = GPSample!(gp1 , [[0.5]] , n = 10)
 	println("spl2 : ")
 	display(spl2)
+	println("mu , sigma = " , GPMuSigma(gp1 , [[0.5]]))
 	println("... DONE")
 	
-	gpNabla = GPParams(parsed_args["configuration_file_gp"] , qvals , vals , [[0.5]])
+	println("RUNNING HMC WITH GAUSSIAN PROCESS...")
+	
+	gpNabla = GPParams(parsed_args["configuration_file_gp"] , qvals , vals)
 
 	function nablauGP(parameters, vector)
 		#global gpNabla
@@ -88,11 +92,10 @@ if abspath(PROGRAM_FILE) == @__FILE__
 		#spl = GPSample!(gpNabla , n = 1)
 		#return ([spl[2,1]],)
 		global gpNabla
-		gpNabla = GPParams!(gpNabla , [parameters])
-		return ([gpNabla.mu[2]],)
+		#gpNabla = GPParams!(gpNabla , [parameters])
+		mu , sigma = GPMuSigma(gpNabla , [parameters])
+		return ([mu[2]],)
 	end
-
-	println("RUNNING HMC WITH GAUSSIAN PROCESS...")
 	
 	spGP = ParamsHMC(parsed_args["configuration_file_hmc1"] , u , nablauGP) 
 	linkGP = Link(spGP ,

@@ -4,7 +4,8 @@ include("GaussianProcesses.jl")
 
 using .GaussianProcesses
 
-export GPParams , GPParams! , GPSample!
+#export GPParams , GPParams! , GPSample!
+export GPParams , GPMuSigma , GPSample!
 
 include("HamiltonianMonteCarlo.jl")
 

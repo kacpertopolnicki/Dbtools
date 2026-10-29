@@ -1,7 +1,7 @@
 module GaussianProcesses
 
 
-export GPParams , GPParams! , GPSample!
+export GPParams , GPMuSigma , GPSample!
 
 using Distributions , Random , Enzyme
 using LinearAlgebra
@@ -148,9 +148,9 @@ distribution (dist), and random number generator (rng).
 # TODO                                                             #
 # ##################################################################
 Base.@kwdef mutable struct GPParams
-	mu :: Vector{Float64}
-	sigma :: Matrix{Float64}
-	dist :: Distribution
+	#mu :: Vector{Float64}
+	#sigma :: Matrix{Float64}
+	#dist :: Distribution
 	rng :: AbstractRNG	
 	sgm_x_x :: Matrix{Float64}
 	inv_sgm_x_x :: Matrix{Float64}
@@ -164,7 +164,7 @@ end
 function GPParams(
 		x :: Vector{Vector{Float64}} , 
 		y :: Vector{Float64} , 
-		xx :: Vector{Vector{Float64}} , 
+		#xx :: Vector{Vector{Float64}} , 
 		D :: Int ; 
 		seed = 1234 ,
 		kernel = simple_kernel ,
@@ -178,19 +178,20 @@ function GPParams(
 
 	inv_sgm_x_x = inv(sgm_x_x)
 
-	sgm_xx_xx = sigma(kernel , xx , xx , D , parameters)
-	sgm_xx_xx = correctPositiveDefinite(sgm_xx_xx)
+	#sgm_xx_xx = sigma(kernel , xx , xx , D , parameters)
+	#sgm_xx_xx = correctPositiveDefinite(sgm_xx_xx)
 
-	sgm_xx_x = sigma(kernel , xx , x , D , parameters)
+	#sgm_xx_x = sigma(kernel , xx , x , D , parameters)
 
-	mun = sgm_xx_x * inv_sgm_x_x * y 
+	#mun = sgm_xx_x * inv_sgm_x_x * y 
 
-	sigman = sgm_xx_xx - sgm_xx_x * inv_sgm_x_x * transpose(sgm_xx_x)
-	sigman = correctPositiveDefinite(sigman)
+	#sigman = sgm_xx_xx - sgm_xx_x * inv_sgm_x_x * transpose(sgm_xx_x)
+	#sigman = correctPositiveDefinite(sigman)
 	
-	dist = MvNormal(mun , sigman)
+	#dist = MvNormal(mun , sigman)
 	rng = Xoshiro(seed)
-	GPParams(mun , sigman , dist , rng , sgm_x_x , inv_sgm_x_x , D , kernel , copy(parameters) , copy(x) , copy(y))
+	#GPParams(mun , sigman , dist , rng , sgm_x_x , inv_sgm_x_x , D , kernel , copy(parameters) , copy(x) , copy(y))
+	GPParams(rng , sgm_x_x , inv_sgm_x_x , D , kernel , copy(parameters) , copy(x) , copy(y))
 end
 
 """
@@ -206,8 +207,8 @@ An example configuration file `config_gp` is available in the configs directory.
 function GPParams(
 		config_file ,
 		x :: Vector{Vector{Float64}} , 
-		y :: Vector{Float64} , 
-		xx :: Vector{Vector{Float64}} , 
+		y :: Vector{Float64} #, 
+		#xx :: Vector{Vector{Float64}} , 
 		) 
 	c = TOML.parsefile(config_file)
 	dim = c["general"]["dimensions"]
@@ -218,14 +219,14 @@ function GPParams(
 	return GPParams(
 			x , 
 			y , 
-			xx , 
+			#xx , 
 			dim ; 
 			seed = seed ,
 			kernel = kernel ,
 			parameters = kernel_parameters) 
 end
 
-function GPParams!(
+function GPMuSigma(
 		gp :: GPParams ,
 		xx :: Vector{Vector{Float64}}
 		) #:: GPParams
@@ -255,20 +256,23 @@ function GPParams!(
 	sigman = sgm_xx_xx - sgm_xx_x * inv_sgm_x_x * transpose(sgm_xx_x)
 	sigman = correctPositiveDefinite(sigman)
 	
-	gp.mu = mun
-	gp.sigma = sigman
-	gp.dist = MvNormal(mun , sigman)
+	#gp.mu = mun
+	#gp.sigma = sigman
+	#gp.dist = MvNormal(mun , sigman)
 
-	return gp
+	return mun , sigman
 end
 
 """
-	GPSample!(gp ; n = 1)
-Draws n samples from the Gaussian Process defined by the GPParams object gp.
 Note that this function is marked ! since the random number generator is modified.
 """
-function GPSample!(gp :: GPParams ; n = 1)
-	return rand(gp.rng , gp.dist , n)
+function GPSample!(
+		gp :: GPParams ,
+		xx :: Vector{Vector{Float64}} ; n = 1
+		)
+	mun , sigman = GPMuSigma(gp , xx)
+	dist = MvNormal(mun , sigman)
+	return rand(gp.rng , dist , n)
 end
 
 end

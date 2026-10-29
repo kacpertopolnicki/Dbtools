@@ -54,11 +54,12 @@ if abspath(PROGRAM_FILE) == @__FILE__
 
 	# calculate Gaussian process data
 	println("calculating Gaussian process data ...")
-	gp = GPParams(parsed_args["configuration_file"] , xy , xyval , xyxy)
+	#gp = GPParams(parsed_args["configuration_file"] , xy , xyval , xyxy)
+	gp = GPParams(parsed_args["configuration_file"] , xy , xyval)
 	println("... done")
 
 	# sample
-	spl = GPSample!(gp , n = 100)
+	spl = GPSample!(gp , xyxy , n = 100)
 
 	# plot
 
