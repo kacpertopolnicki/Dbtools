@@ -1,0 +1,41 @@
+[general]
+
+# number of parameters
+n = 2
+
+# seed for random number generator
+seed = 1124
+
+[leap_frog]
+
+# step size
+epsilon = 0.01
+
+# accuracy goal for tuning epsilon
+accuracy = 0.01
+
+# max time step size, this will be used for tuning
+# negative values mean no tuning
+max_epsilon = -0.1
+
+# number of iteration for the time step tunig procedure
+# negative values mean no tuning
+tune_iter = -100
+
+# fraction parameter for time step tuning procedure
+# negative values mean no tuning
+tune_f = -0.9
+
+# length of trajectories for leaf frog
+# integration, the number of iterations
+# is length / epsilon
+length = 2.0
+
+[hamiltonian_monte_carlo]
+
+# mass parameter
+mass = 1.0
+
+# number of iterations
+iterations = 5000
+

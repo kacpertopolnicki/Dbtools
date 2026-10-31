@@ -1,0 +1,18 @@
+[general]
+
+# The number of dimensions. The function f(x1 , x2 , ... , xdimensions) 
+# takes dimensions real parameters and will be approximated using
+# a Gaussian process.
+dimensions = 2
+
+# Seed for the random number generator.
+seed = 1234
+
+[kernel]
+
+# Name of kernel, options are:
+# - simple_kernel
+kernel_name = "simple_kernel"
+
+# List of real parameters for the kernel:
+kernel_parameters = []
